@@ -22,6 +22,75 @@
 #include <bitset>
 #include <exception>
 
+// Deleter function template
+template<typename T>
+void delete_impl(void* x) {
+    delete static_cast<T*>(x);
+}
+
+// Tracked pointer record
+struct TrackedPtr {
+    void* ptr;
+    void (*deleter)(void*);
+
+    // compare by pointer address
+    bool operator<(const TrackedPtr& other) const {
+        return ptr < other.ptr;
+    }
+};
+
+// global tracking set
+std::set<TrackedPtr> g_ptrs;
+
+// allocate + track
+template<typename T>
+T* track_new() {
+    T* p = new T;
+
+    TrackedPtr tp;
+    tp.ptr = p;
+    tp.deleter = &delete_impl<T>;
+
+    g_ptrs.insert(tp);
+    return p;
+}
+
+// delete + untrack
+template<typename T>
+void track_delete(T* p) {
+    TrackedPtr key;
+    key.ptr = p;
+    key.deleter = 0;
+
+    std::set<TrackedPtr>::iterator it = g_ptrs.find(key);
+    if (it != g_ptrs.end()) {
+        it->deleter(p);
+        g_ptrs.erase(it);
+    }
+}
+
+// free all remaining
+void cleanup_unfreed() {
+    std::set<TrackedPtr>::iterator it = g_ptrs.begin();
+    for (; it != g_ptrs.end(); ++it) {
+        it->deleter(it->ptr);
+    }
+    g_ptrs.clear();
+}
+
+/****************************************************
+ * TEST CLASSES
+ ****************************************************/
+
+struct Foo {
+    Foo()  { std::cout << "Foo constructed\n"; }
+    ~Foo() { std::cout << "Foo destructed\n"; }
+};
+
+struct Bar {
+    Bar()  { std::cout << "Bar constructed\n"; }
+    ~Bar() { std::cout << "Bar destructed\n"; }
+};
 int fact(int n) {
     if (n == 0) {
         return 1;
@@ -634,4 +703,29 @@ TEST_CASE("buffer_overflow") {
 
 TEST_CASE("test") {
     std::cout << "test\n";
+}
+
+TEST_CASE("memory_track") {
+    std::cout << "memory_track\n";
+
+    Foo* f1 = track_new<Foo>();
+    Foo* f2 = track_new<Foo>();
+    Bar* b1 = track_new<Bar>();
+
+    std::cout << "\nNow deleting f1 manually...\n";
+    track_delete(f1);   // correct deletion
+
+    std::cout << "\nNOT deleting f2 and b1 (intentional leaks)...\n";
+    // f2 and b1 remain in g_ptrs → considered "leaked"
+
+    std::cout << "\nRemaining tracked pointers before cleanup: "
+              << g_ptrs.size() << "\n";
+
+    std::cout << "\nRunning cleanup_unfreed()...\n";
+    cleanup_unfreed();  // automatically delete f2 and b1
+
+    std::cout << "\nRemaining tracked pointers after cleanup: "
+              << g_ptrs.size() << "\n";
+
+    std::cout << "\n=== Test End ===\n";
 }
