@@ -713,19 +713,14 @@ TEST_CASE("memory_track") {
     Bar* b1 = track_new<Bar>();
 
     std::cout << "\nNow deleting f1 manually...\n";
-    track_delete(f1);   // correct deletion
-
-    std::cout << "\nNOT deleting f2 and b1 (intentional leaks)...\n";
-    // f2 and b1 remain in g_ptrs → considered "leaked"
+    track_delete(f1);
 
     std::cout << "\nRemaining tracked pointers before cleanup: "
               << g_ptrs.size() << "\n";
 
     std::cout << "\nRunning cleanup_unfreed()...\n";
-    cleanup_unfreed();  // automatically delete f2 and b1
+    cleanup_unfreed();
 
     std::cout << "\nRemaining tracked pointers after cleanup: "
               << g_ptrs.size() << "\n";
-
-    std::cout << "\n=== Test End ===\n";
 }
