@@ -634,4 +634,10 @@ TEST_CASE("buffer_overflow") {
 
 TEST_CASE("test1") {
     std::cout << "test\n";
+
+    int a;
+    std::cout << "a: " << a << "\n";
+
+    int *p = new int[10];
+    p[3] = 4;
 }
