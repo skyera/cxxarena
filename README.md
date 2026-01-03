@@ -7,3 +7,5 @@ c/c++/stl
 - CodeChecker analyze compile_commands.json -o reports-new
 - CodeChecker cmd diff -b reports.baseline -n reports-new --new
 
+
+ -o rows|json
