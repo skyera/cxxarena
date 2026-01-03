@@ -657,5 +657,3 @@ TEST_CASE("factial") {
     REQUIRE(result == 24);
 
 }
-    int *p = new int[10];
-    int a;
