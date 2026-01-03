@@ -641,3 +641,11 @@ TEST_CASE("test1") {
     int *p = new int[10];
     p[3] = 4;
 }
+
+TEST_CASE("buffer_overflow2") {
+    int *p = new int[10];
+    int a;
+
+    int b = a + 3;
+    printf("b %d\n", b);
+}
