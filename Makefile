@@ -14,7 +14,7 @@ ASAN_LDFLAGS = -fsanitize=address
 TARGET = test
 
 # Source file
-SRC = test.cpp
+SRC = test.cpp utility.cpp
 
 # Object file
 OBJ = $(SRC:.cpp=.o)
@@ -41,8 +41,8 @@ $(TARGET): $(OBJ)
 	$(CC) $(LDFLAGS) $(OBJ) -o $(TARGET)
 
 # Compile source files to object files
-$(OBJ): $(SRC)
-	$(CC) $(CFLAGS) $(INCLUDES) -c $(SRC) -o $(OBJ)
+%.o: %.cpp
+	$(CC) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
 # Debug target: build with debugging symbols
 debug: CFLAGS += $(DEBUG_FLAGS)

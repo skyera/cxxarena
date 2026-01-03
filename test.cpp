@@ -21,6 +21,7 @@
 #include "stb_image.h"
 #include <bitset>
 #include <exception>
+#include "utility.h"
 
 int fact(int n) {
     if (n == 0) {
@@ -649,3 +650,12 @@ TEST_CASE("buffer_overflow2") {
     int b = a + 3;
     printf("b %d\n", b);
 }
+
+TEST_CASE("factial") {
+    int n = 4;
+    int result = factial(n);
+    REQUIRE(result == 24);
+
+}
+    int *p = new int[10];
+    int a;
