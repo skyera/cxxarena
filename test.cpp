@@ -677,3 +677,31 @@ TEST_CASE("binary_search") {
     REQUIRE(binarySearch(arr, 6) == -1);
     REQUIRE(binarySearch(arr, 16) == -1);
 }
+
+template<typename T>
+void insertionSort(std::vector<T>& arr) {
+    for (size_t i = 1; i < arr.size(); ++i) {
+        T key = arr[i];
+        size_t j = i;
+        while (j > 0 && arr[j - 1] > key) {
+            arr[j] = arr[j - 1];
+            --j;
+        }
+        arr[j] = key;
+    }
+}
+
+TEST_CASE("insertion_sort") {
+    std::vector<int> arr = {5, 2, 9, 1, 5, 6};
+    insertionSort(arr);
+    std::vector<int> expected = {1, 2, 5, 5, 6, 9};
+    REQUIRE(arr == expected);
+
+    std::vector<int> empty = {};
+    insertionSort(empty);
+    REQUIRE(empty.empty());
+
+    std::vector<int> single = {42};
+    insertionSort(single);
+    REQUIRE(single[0] == 42);
+}
