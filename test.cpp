@@ -705,3 +705,38 @@ TEST_CASE("insertion_sort") {
     insertionSort(single);
     REQUIRE(single[0] == 42);
 }
+
+template<typename T>
+void bubbleSort(std::vector<T>& arr) {
+    size_t n = arr.size();
+    bool swapped;
+    do {
+        swapped = false;
+        for (size_t j = 1; j < n; ++j) {
+            if (arr[j - 1] > arr[j]) {
+                std::swap(arr[j - 1], arr[j]);
+                swapped = true;
+            }
+        }
+        --n;
+    } while (swapped);
+}
+
+TEST_CASE("bubble_sort") {
+    std::vector<int> arr = {64, 34, 25, 12, 22, 11, 90};
+    bubbleSort(arr);
+    std::vector<int> expected = {11, 12, 22, 25, 34, 64, 90};
+    REQUIRE(arr == expected);
+
+    std::vector<int> sorted = {1, 2, 3, 4, 5};
+    bubbleSort(sorted);
+    REQUIRE(sorted == std::vector<int>{1, 2, 3, 4, 5});
+
+    std::vector<int> reverse = {5, 4, 3, 2, 1};
+    bubbleSort(reverse);
+    REQUIRE(reverse == std::vector<int>{1, 2, 3, 4, 5});
+
+    std::vector<int> empty;
+    bubbleSort(empty);
+    REQUIRE(empty.empty());
+}
