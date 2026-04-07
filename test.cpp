@@ -28,6 +28,18 @@ int fact(int n) {
     return n <= 1 ? n : fact(n - 1) * n;
 }
 
+int fibonacci(int n) {
+    if (n <= 0) return 0;
+    if (n == 1) return 1;
+    int a = 0, b = 1;
+    for (int i = 2; i <= n; ++i) {
+        int temp = a + b;
+        a = b;
+        b = temp;
+    }
+    return b;
+}
+
 struct SomeInterface {
     virtual int foo(int) = 0;
     virtual int bar(std::string) = 0;
@@ -76,6 +88,21 @@ TEST_CASE("testing the factorial function") {
     CHECK(fact(2) == 2);
     CHECK(fact(3) == 6);
     CHECK(fact(10) == 3628800);
+}
+
+TEST_CASE("testing the fibonacci function") {
+    CHECK(fibonacci(0) == 0);
+    CHECK(fibonacci(1) == 1);
+    CHECK(fibonacci(2) == 1);
+    CHECK(fibonacci(3) == 2);
+    CHECK(fibonacci(4) == 3);
+    CHECK(fibonacci(5) == 5);
+    CHECK(fibonacci(6) == 8);
+    CHECK(fibonacci(7) == 13);
+    CHECK(fibonacci(8) == 21);
+    CHECK(fibonacci(9) == 34);
+    CHECK(fibonacci(10) == 55);
+    CHECK(fibonacci(20) == 6765);
 }
 
 TEST_CASE("bench") {
