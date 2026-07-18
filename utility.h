@@ -1,5 +1,8 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
-extern int factial(int n);
+int factorial(int n);
+int add(int a, int b);
+
 #endif
+

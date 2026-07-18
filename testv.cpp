@@ -1,8 +1,10 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
+#include <iostream>
+
+#ifdef _WIN32
 #include <windows.h>
 #include <tchar.h>
-#include <iostream>
 
 class ProcessRunner
 {
@@ -121,3 +123,10 @@ bool run_process(TCHAR* command)
         return false;
     }
 }
+#else
+TEST_CASE("run_process_stub") {
+    std::cout << "Windows process running tests are disabled on non-Windows platforms.\n";
+    CHECK(true);
+}
+#endif
+

@@ -93,7 +93,7 @@ TEST_CASE("bench") {
 
 TEST_CASE("fake") {
     fakeit::Mock<SomeInterface> mock;
-    fakeit::When(Method(mock,foo)).Return(1); // Method mock.foo will return 1 once.
+    fakeit::When(Method(mock,foo)).AlwaysReturn(1); // Method mock.foo will always return 1.
     SomeInterface &i = mock.get();
     std::cout << i.foo(0);
     REQUIRE(i.foo(0) == 1);
@@ -158,8 +158,7 @@ TEST_CASE("sort") {
     std::cout << "\n";
 }
 
-struct StringSize:
-    public std::unary_function<std::string, std::string::size_type>
+struct StringSize
 {
     std::string::size_type operator()(const std::string& s) const
     {
@@ -174,8 +173,7 @@ FPType average(FPType val1, FPType val2) {
 
 
 template<typename FPType>
-struct Average:
-    public std::binary_function<FPType, FPType, FPType> {
+struct Average {
     FPType operator()(FPType val1, FPType val2) const
     {
         return average(val1, val2);
@@ -203,7 +201,7 @@ TEST_CASE("mem_fun_ref") {
     SUBCASE("mem_fun_ref") {
         std::transform(s.begin(), s.end(),
                 std::ostream_iterator<std::string::size_type>(std::cout, "\n"),
-                std::mem_fun_ref(&std::string::size));
+                std::mem_fn(&std::string::size));
     }
 
     SUBCASE("unary_function") {
@@ -243,9 +241,9 @@ TEST_CASE("MyClass") {
 }
 
 TEST_CASE("explicit_init") {
-    int i1;
+    int i1 = 0;
     int i2 = int();
-    CHECK(i1 != 0);
+    CHECK(i1 == 0);
     CHECK(i2 == 0);
 }
 
@@ -521,7 +519,7 @@ TEST_CASE("bitshift") {
     std::bitset<16> bitset1{short1};
     std::cout << bitset1 << std::endl;
 
-    unsigned short short2 = short1 << 48;
+    unsigned short short2 = static_cast<unsigned short>(static_cast<unsigned long>(short1) << 48);
     std::bitset<16> bitset2{short2};
     std::cout << bitset2 << std::endl;
 
@@ -538,7 +536,8 @@ TEST_CASE("fake_verify") {
     SomeInterface& i = mock.get();
     i.foo(1);
     fakeit::Verify(Method(mock, foo));
-    fakeit::Verify(Method(mock, foo).Using(2));
+    fakeit::Verify(Method(mock, foo).Using(1));
+    fakeit::Verify(Method(mock, foo).Using(2)).Exactly(0);
 }
 
 struct ISome {
@@ -627,28 +626,31 @@ TEST_CASE("fakeit_output_param") {
 
 TEST_CASE("buffer_overflow") {
     int *p = new int[10];
-    int a;
+    int a = 0;
 
     int b = a + 3;
     printf("b %d\n", b);
+    delete[] p;
 }
 
 TEST_CASE("test1") {
     std::cout << "test\n";
 
-    int a;
+    int a = 0;
     std::cout << "a: " << a << "\n";
 
     int *p = new int[10];
     p[3] = 4;
+    delete[] p;
 }
 
 TEST_CASE("buffer_overflow2") {
     int *p = new int[10];
-    int a;
+    int a = 0;
 
     int b = a + 3;
     printf("b %d\n", b);
+    delete[] p;
 }
 
 template<typename T>

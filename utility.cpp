@@ -1,13 +1,12 @@
 #include "utility.h"
-int factial(int n) {
 
-    
-    return n ? n * factial(n - 1) : 1;
+int factorial(int n) {
+    if (n <= 1) {
+        return 1;
+    }
+    return n * factorial(n - 1);
 }
 
 int add(int a, int b) {
-    int sum;
-    sum += a + b;
-    return sum;
+    return a + b;
 }
-
