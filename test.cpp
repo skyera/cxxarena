@@ -546,7 +546,7 @@ TEST_CASE("bitshift") {
     std::bitset<16> bitset1{short1};
     std::cout << bitset1 << std::endl;
 
-    unsigned short short2 = short1 << 48;
+    unsigned short short2 = static_cast<unsigned short>(static_cast<unsigned long long>(short1) << 48);
     std::bitset<16> bitset2{short2};
     std::cout << bitset2 << std::endl;
 
@@ -652,10 +652,12 @@ TEST_CASE("fakeit_output_param") {
 
 TEST_CASE("buffer_overflow") {
     int *p = new int[10];
-    int a;
+    p[0] = 0;
+    int a = p[0];
 
     int b = a + 3;
     printf("b %d\n", b);
+    delete[] p;
 }
 
 TEST_CASE("test") {
